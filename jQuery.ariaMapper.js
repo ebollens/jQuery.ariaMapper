@@ -4,10 +4,12 @@
     
         // Shortcuts for arrays used multiple times in this initializer
         sectionElements = ['article','section','nav','aside','h1','h2','h3','h4','h5','h6','header','footer','main'],
-        headerElements = ['header','hgroup','h1','h2','h3','h4','h5','h6'],
         
         // Shortcuts for methods used multiple times in this definition
-        resolveLabeledBy = function(){ $(this).ariaMapperHelper('resolveLabeledBy', headerElements) },
+        resolveLabeledBy = function(){ $(this).ariaMapperHelper('resolveLabeledBy') },
+        prepareRegion = function(){ 
+            resolveLabeledBy.call(this)
+        }
         
         // Default options
         defaults = {
@@ -25,8 +27,13 @@
                         "region": "section"
                     },
                     "callbacks": {
-                        "article": resolveLabeledBy,
-                        "region": resolveLabeledBy
+                        "banner": prepareRegion,
+                        "contentinfo": prepareRegion,
+                        "main": prepareRegion,
+                        "article": prepareRegion,
+                        "complementary": prepareRegion,
+                        "navigation": prepareRegion,
+                        "region": prepareRegion
                     },
                     "filters": {},
                     "exclusions": []
@@ -43,25 +50,6 @@
         this.options = $.extend( true, {}, defaults, options);
         this._defaults = defaults;
         this._name = pluginName;
-    }
-    
-    Plugin.prototype.resolveLabeledBy = function(labelSelectors){
-            
-        if(!labelSelectors)
-            labelSelectors = headerElements
-
-        ele = $(this.element)
-
-        if(!ele.attr('aria-labeledby')){
-            var children = $(labelSelectors).filter(function(){ return ele.find(this.toString()).length > 0 }).get()
-            if(children.length > 0){
-                var child = ele.find(children[0]).first()
-                if(child.attr('id') === undefined)
-                    child.attr('id', "aria-"+Math.random().toString(36).substring(2));
-                ele.attr('aria-labeledby',child.attr('id'))
-            }
-        }
-
     }
 
     Plugin.prototype.run = function () {
@@ -112,7 +100,7 @@
                 
                 if(roleCallbacks[name])
                     $('[aria-role="'+name+'"]').each(function(){
-                        var ele = this;
+                        var ele = $(this);
                         ele.super = function(){
                             if(options.roles.polyfill || options.polyfill && options.roles.polyfill !== false)
                                 if(options.roles.polyfills.callbacks[name] && options.roles.polyfills.exclusions.indexOf(name) < 0)

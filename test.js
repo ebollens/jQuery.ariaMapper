@@ -63,5 +63,25 @@
         });
         
     });
+    
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+     * 
+     *    Helper labeledByResolution Tests
+     * 
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
+    asyncTest('Helper resolveLabeledBy resolution tests', function(){
+    
+        var elements = ['header','hgroup','h1','h2','h3','h4','h5','h6'];
+        _.test('resolveLabeledBy', function(){
+            this.ariaMapper();
+            this.find('[data-label]').each(function(){
+                var element = $(this),
+                    selector = element.attr('data-label')
+                ok(element.find(selector).attr('id') == element.attr('aria-labeledby'), "Properly resolved selector `"+selector+"` as label" )
+            })
+        })
+        
+    });
 
 })(jQuery);

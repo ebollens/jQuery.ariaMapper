@@ -11,7 +11,7 @@
             $.get('test/mock/'+filename+'.html', function(data){
                 mock.element.empty().html(data);
                 callback.call(mock.element);
-                mock.element.empty();
+                //mock.element.empty();
                 start();
             })
         }
@@ -72,7 +72,6 @@
     
     asyncTest('Helper resolveLabeledBy resolution tests', function(){
     
-        var elements = ['header','hgroup','h1','h2','h3','h4','h5','h6'];
         _.test('resolveLabeledBy', function(){
             this.ariaMapper();
             this.find('[data-label]').each(function(){

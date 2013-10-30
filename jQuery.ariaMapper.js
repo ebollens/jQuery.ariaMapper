@@ -63,7 +63,7 @@
             onlyOnceWithRole = ['banner','contentinfo','main'],
             selected,
             
-            roleFilters = $.extend({}, options.roles.polyfills.filters, options.roles.filters)
+            roleFilters = $.extend({}, options.roles.polyfills.filters, options.roles.filters),
             roleCallbacks = $.extend({}, options.roles.polyfills.callbacks, options.roles.callbacks);
     
         jQuery.each(options.roles.selectors, function(k, v){
@@ -91,7 +91,15 @@
                 selected = $(element).find(selectors.join(', ')).filter(function(){ return $(this).attr('aria-role') === undefined })
                 
                 if(roleFilters[name])
-                    selected = selected.filter(roleFilters[name])
+                    selected = selected.filter(function(){ 
+                        var ele = $(this);
+                        ele.super = function(){
+                            if(options.roles.polyfill || options.polyfill && options.roles.polyfill !== false)
+                                if(options.roles.polyfills.filters[name] && options.roles.polyfills.exclusions.indexOf(name) < 0)
+                                    return options.roles.polyfills.filters[name].call(ele);
+                        }
+                        return roleFilters[name].call(ele) 
+                    });
                 
                 if(onlyOnceWithRole.indexOf(name) >= 0 && (selected.length + $(element).find('[aria-role="'+name+'"]').length > 1))
                     return;
@@ -104,9 +112,8 @@
                         ele.super = function(){
                             if(options.roles.polyfill || options.polyfill && options.roles.polyfill !== false)
                                 if(options.roles.polyfills.callbacks[name] && options.roles.polyfills.exclusions.indexOf(name) < 0)
-                                    options.roles.polyfills.callbacks[name].call(ele)
+                                    options.roles.polyfills.callbacks[name].call(ele);
                         }
-                        ele.helper = $(ele).ariaMapperHelper;
                         roleCallbacks[name].call(ele)
                     })
             }

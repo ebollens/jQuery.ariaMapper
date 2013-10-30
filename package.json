@@ -1,0 +1,9 @@
+{
+  "name": "jQuery.ariaMapper",
+  "version": "0.0.1",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "bower":"1.0.3"
+  }
+}

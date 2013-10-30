@@ -16,11 +16,11 @@
                 "polyfill":null,
                 "polyfills": {
                     "selectors": {
-                        "article": "article",
                         "banner": "header:not("+sectionElements.join(' header):not(')+" header)",
-                        "complementary": "aside",
                         "contentinfo": "footer:not("+sectionElements.join(' footer):not(')+" footer)",
                         "main": "main",
+                        "article": "article",
+                        "complementary": "aside",
                         "navigation": "nav",
                         "region": "section"
                     },
@@ -129,12 +129,6 @@
     $.fn[pluginName] = function ( options ) {
         return this.each(function () {
             (new Plugin(this, options)).run();
-            /*
-            if (!$.data(this, 'plugin_' + pluginName)) {
-                $.data(this, 'plugin_' + pluginName, 
-                (new Plugin(this, options)).run() );
-            }
-            */
         });
     }
     

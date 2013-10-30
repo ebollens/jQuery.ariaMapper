@@ -7,6 +7,7 @@
     "bower_components"
   ],
   "dependencies": {
-    "jquery": ">= 1.8.0"
+    "jquery": ">= 1.8.0",
+    "qunit": ">= 1.12.0"
   }
 }

@@ -9,7 +9,7 @@
         resolveLabeledBy = function(){ $(this).ariaMapperHelper('resolveLabeledBy') },
         prepareRegion = function(){ 
             resolveLabeledBy.call(this)
-        }
+        },
         
         // Default options
         defaults = {

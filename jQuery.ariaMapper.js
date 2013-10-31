@@ -84,14 +84,14 @@
         // add labeledby roles to selector list
         $.each(options.labeledby.roles, function(role,included){
             if(included)
-                labeledbySelectors['[aria-role="'+role+'"]'] = true
+                labeledbySelectors['[role="'+role+'"]'] = true
         })
         
         $.each(roles, function(name, selectors){
             
             if(options.roles.exclusions.indexOf(name) < 0){
                 
-                selected = $(element).find(selectors.join(', ')).filter(function(){ return $(this).attr('aria-role') === undefined })
+                selected = $(element).find(selectors.join(', ')).filter(function(){ return $(this).attr('role') === undefined })
                 
                 if(roleFilters[name])
                     selected = selected.filter(function(){ 
@@ -104,13 +104,13 @@
                         return roleFilters[name].call(ele) 
                     });
                 
-                if(onlyOnceWithRole.indexOf(name) >= 0 && (selected.length + $(element).find('[aria-role="'+name+'"]').length > 1))
+                if(onlyOnceWithRole.indexOf(name) >= 0 && (selected.length + $(element).find('[role="'+name+'"]').length > 1))
                     return;
                 
-                selected.attr('aria-role',name);
+                selected.attr('role',name);
                 
                 if(roleCallbacks[name])
-                    $('[aria-role="'+name+'"]').each(function(){
+                    $('[role="'+name+'"]').each(function(){
                         var ele = $(this);
                         ele.super = function(){
                             if(options.roles.polyfill || options.polyfill && options.roles.polyfill !== false)

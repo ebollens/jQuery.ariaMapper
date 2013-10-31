@@ -7,22 +7,36 @@
         this._name = pluginName;
     }
     
-    Plugin.prototype.resolveLabeledBy = function(labelSelectors){
+    Plugin.prototype.prepareRegion = function(){
+        this[pluginName]('resolveLabeledBy')
+    }
+    
+    Plugin.prototype.prepareLandmark = function(){
+        this[pluginName]('prepareRegion')
+    }
+    
+    Plugin.prototype.resolveLabeledBy = function(searchMethod, labelSelectors){
         
         var ele = this;
         
         if(!labelSelectors)
             labelSelectors = headerElements;
         
+        if(!searchMethod)
+            searchMethod = 'children'
+        
         if(!ele.attr('aria-labeledby')){
-            var children = $(labelSelectors).filter(function(){ return ele.find(this.toString()).length > 0 }).get()
+            var children = $(labelSelectors).filter(function(){ return ele[searchMethod](this.toString()).length > 0 }).get()
             if(children.length > 0){
-                var child = ele.find(children[0]).first()
-                if(child.attr('id') === undefined)
-                    child.attr('id', "aria-"+Math.random().toString(36).substring(2));
-                ele.attr('aria-labeledby',child.attr('id'))
+                ele[pluginName]('setLabeledBy', ele[searchMethod](children[0]).first());
             }
         }
+    }
+    
+    Plugin.prototype.setLabeledBy = function(label){
+        if(label.attr('id') == undefined)
+            label.attr('id', "aria-"+Math.random().toString(36).substring(2));
+        this.attr('aria-labeledby',label.attr('id'))
     }
     
     $.fn[pluginName] = function ( operation ) {

@@ -6,10 +6,8 @@
         sectionElements = ['article','section','nav','aside','h1','h2','h3','h4','h5','h6','header','footer','main'],
         
         // Shortcuts for methods used multiple times in this definition
-        resolveLabeledBy = function(){ $(this).ariaMapperHelper('resolveLabeledBy') },
-        prepareRegion = function(){ 
-            resolveLabeledBy.call(this)
-        },
+        prepareLandmark = function(){ $(this).ariaMapperHelper('prepareLandmark') },
+        prepareRegion = function(){ $(this).ariaMapperHelper('prepareRegion')},
         
         // Default options
         defaults = {
@@ -22,18 +20,32 @@
                         "contentinfo": "footer:not("+sectionElements.join(' footer):not(')+" footer)",
                         "main": "main",
                         "article": "article",
-                        "complementary": "aside",
+                        "complementary": "aside:not(main aside)",
                         "navigation": "nav",
                         "region": "section"
                     },
                     "callbacks": {
-                        "banner": prepareRegion,
-                        "contentinfo": prepareRegion,
-                        "main": prepareRegion,
+                        "alert": prepareRegion,
+                        "alertdialog": prepareRegion,
+                        "application": prepareLandmark,
                         "article": prepareRegion,
-                        "complementary": prepareRegion,
-                        "navigation": prepareRegion,
-                        "region": prepareRegion
+                        "banner": prepareLandmark,
+                        "complementary": prepareLandmark,
+                        "contentinfo": prepareLandmark,
+                        "directory": prepareRegion,
+                        "form": prepareLandmark,
+                        "grid": prepareRegion,
+                        "list": prepareRegion,
+                        "log": prepareRegion,
+                        "main": prepareLandmark,
+                        "navigation": prepareLandmark,
+                        "region": prepareRegion,
+                        "search": prepareLandmark,
+                        "status": prepareRegion,
+                        "tabpanel": prepareRegion,
+                        "tablist": prepareRegion,
+                        "timer": prepareRegion,
+                        "treegrid": prepareRegion
                     },
                     "filters": {},
                     "exclusions": []
@@ -118,6 +130,8 @@
                     })
             }
         })
+        
+        
         
     };
     

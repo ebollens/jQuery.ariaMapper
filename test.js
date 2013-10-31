@@ -34,7 +34,7 @@
      * 
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    asyncTest( "Polyfill landmark role mappings", function() {
+    asyncTest( "Roles polyfill landmark role mappings", function() {
         
         $.each({'.-banner':'banner', '.-main':'main', '.-contentinfo':'contentinfo'}, function( selector, role ){
             _.test('sectionsBasic', function(){
@@ -54,7 +54,7 @@
      * 
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-    asyncTest( "Polyfill doument structure role mappings", function() {
+    asyncTest( "Roles polyfill doument structure role mappings", function() {
     
         $.each({'article':'article','nav':'navigation','section':'region'}, function( selector, role ){ 
             _.test('sectionsBasic', function(){
@@ -75,7 +75,7 @@
     
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
      * 
-     *    Helper labeledByResolution Tests
+     *    Helper resolveLabeledBy Tests
      * 
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
@@ -98,7 +98,7 @@
      * 
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    asyncTest( "Polyfill disabled", function() {
+    asyncTest( "Roles polyfill disabled", function() {
         
         _.test('sectionsBasic', function(){
             this.ariaMapper({'polyfill':false})
@@ -130,7 +130,7 @@
      * 
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    asyncTest( "Callbacks", function() {
+    asyncTest( "Roles callbacks", function() {
         
         _.test('sectionsBasic', function(){
             this.ariaMapper();
@@ -140,16 +140,22 @@
         stop();
         
         _.test('sectionsBasic', function(){
-            this.ariaMapper({'roles':{'callbacks':{'banner':function(){ this.attr('data-test','success'); }}}});
+            this.ariaMapper({'roles':{
+                    'polyfills':{'callbacks':{'banner':function(){ this.attr('data-polyfill','success'); }}},
+                    'callbacks':{'banner':function(){ this.attr('data-test','success'); }}
+            }});
             ok( this.find('[aria-role="banner"]').attr('data-test') == 'success', "User-defined callback invoked when set");
-            ok( !this.find('[aria-role="banner"]').attr('aria-labeledby'), "Polyfill callback not invoked when user-defined callback is set and this.super() is not called");
+            ok( !this.find('[aria-role="banner"]').attr('data-polyfill'), "Polyfill callback not invoked when user-defined callback is set and this.super() is not called");
         });
         
         stop();
         
         _.test('sectionsBasic', function(){
-            this.ariaMapper({'roles':{'callbacks':{'banner':function(){ this.super(); this.attr('data-test','success'); }}}});
-            ok( this.find('[aria-role="banner"]').attr('aria-labeledby'), "Polyfill callback invocable as this.super() from user-defined callback");
+            this.ariaMapper({'roles':{
+                    'polyfills':{'callbacks':{'banner':function(){ this.attr('data-polyfill','success'); }}},
+                    'callbacks':{'banner':function(){ this.super(); this.attr('data-test','success'); }}
+            }});
+            ok( this.find('[aria-role="banner"]').attr('data-polyfill'), "Polyfill callback invocable as this.super() from user-defined callback");
         });
         
         
@@ -161,7 +167,7 @@
      * 
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    asyncTest( "Filters", function() {
+    asyncTest( "Roles filters", function() {
         
         _.test('sectionsBasic', function(){
             this.ariaMapper({'roles':{'filters':{'navigation':function(){ return $(this).closest('.-main').length == 0 }}}});
@@ -194,6 +200,26 @@
         
     });
     
+    asyncTest( "labeledBy", function(){
+        
+        _.test('labelChild', function(){
+            this.ariaMapper({'labeledby':{'selectors':{
+                'span.item': true
+            }}});
+            ok(this.find('.item').attr('aria-labeledby') == this.find('.label').attr('id'), 'Label properly assigned from child with default (`true`) labeledby selector')
+        })
+        
+        stop();
+        
+        _.test('labelSibling', function(){
+            this.ariaMapper({'labeledby':{'selectors':{
+                'span.item': function(){ this.ariaMapperHelper('resolveLabeledBy', 'siblings', 'span.label') }
+            }}})
+            ok(this.find('.item').attr('aria-labeledby') == this.find('.label').attr('id'), 'Label properly assigned from sibling with custom resolveLabledBy invocation')
+        })
+        
+    })
+    
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
      * 
      *    WebBlocks Tests
@@ -205,10 +231,15 @@
         ok( typeof $.fn.ariaWebBlocksMapper == 'function' , "Module ariaWebBlocksMapper is available on jQuery.fn" );
         
         _.test('sectionsWebBlocks', function(){
+            
             this.ariaWebBlocksMapper();
+            
+            // var helpers
             var header = this.find('[aria-role="banner"]'),
                 mainContainer = this.find('#main-container'),
                 main = this.find('main');
+                
+            // header with banner role and label
             ok(header.find('hgroup + nav.search + nav.mega').length == 1, "Resolved header as `banner`");
             ok(header.attr('aria-labeledby') == header.children('hgroup').attr('id'), "Resolved label for `banner`");
             
@@ -217,7 +248,7 @@
             ok(header.children('nav.mega').attr('aria-role') == 'navigation', "Resolved `header > nav.mega` with role `navigation`");
             header.children('nav').each(function(){
                 var nav = $(this);
-                ok(nav.attr('aria-labeledby') == nav.children('h1').attr('id'), "Resolved label for `header > nav."+nav.attr('class')+"`");
+                ok(nav.attr('aria-labeledby') && nav.attr('aria-labeledby') == nav.children('h1').attr('id'), "Resolved label for `header > nav."+nav.attr('class')+"`");
             })
             
             // elements adjacent to main have proper roles
@@ -230,7 +261,7 @@
             // article with article role
             this.find('article').each(function(){
                 ok($(this).attr('aria-role') == 'article', 'Resolved `article` with role `article`');
-                ok($(this).attr('aria-labeledby') == $(this).children('header').attr('id'), 'Resolved `article` as labeled by `header`');
+                ok($(this).attr('aria-labeledby') && $(this).attr('aria-labeledby') == $(this).children('header').attr('id'), 'Resolved `article` as labeled by `header`');
             })
             
             // messages with alert role
@@ -238,7 +269,7 @@
                 var type = this;
                 main.find('div.message.'+type).each(function(){
                     ok($(this).attr('aria-role') == 'alert', 'Resolved `div.message.'+type+'` with role `alert`');
-                    ok($(this).attr('aria-labeledby') == $(this).children('header').attr('id'), 'Resolved `div.message.'+type+'` as labeled by `header`');
+                    ok($(this).attr('aria-labeledby') && $(this).attr('aria-labeledby') == $(this).children('header').attr('id'), 'Resolved `div.message.'+type+'` as labeled by `header`');
                 })
             })
             
@@ -247,7 +278,7 @@
                 var type = this;
                 main.find('div.message.'+type).each(function(){
                     ok($(this).attr('aria-role') == 'status', 'Resolved `div.message.'+type+'` with role `status`');
-                    ok($(this).attr('aria-labeledby') == $(this).children('header').attr('id'), 'Resolved `div.message.'+type+'` as labeled by `header`');
+                    ok($(this).attr('aria-labeledby') && $(this).attr('aria-labeledby') == $(this).children('header').attr('id'), 'Resolved `div.message.'+type+'` as labeled by `header`');
                 })
             })
         });

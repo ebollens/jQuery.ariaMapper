@@ -7,14 +7,6 @@
         this._name = pluginName;
     }
     
-    Plugin.prototype.prepareRegion = function(){
-        this[pluginName]('resolveLabeledBy')
-    }
-    
-    Plugin.prototype.prepareLandmark = function(){
-        this[pluginName]('prepareRegion')
-    }
-    
     Plugin.prototype.resolveLabeledBy = function(searchMethod, labelSelectors){
         
         var ele = this;
@@ -24,6 +16,9 @@
         
         if(!searchMethod)
             searchMethod = 'children'
+        
+        if(typeof labelSelectors != 'array')
+            labelSelectors = [labelSelectors]
         
         if(!ele.attr('aria-labeledby')){
             var children = $(labelSelectors).filter(function(){ return ele[searchMethod](this.toString()).length > 0 }).get()

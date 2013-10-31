@@ -1,16 +1,13 @@
 ;(function ( $, window, document, undefined ) {
     
-    var pluginName = 'ariaMapper',
+    var pluginName = 'ariaMapper';
     
-        // Shortcuts for arrays used multiple times in this initializer
-        sectionElements = ['article','section','nav','aside','h1','h2','h3','h4','h5','h6','header','footer','main'],
-        
-        // Shortcuts for methods used multiple times in this definition
-        prepareLandmark = function(){ $(this).ariaMapperHelper('prepareLandmark') },
-        prepareRegion = function(){ $(this).ariaMapperHelper('prepareRegion')},
+    var sectionElements = ['article','section','nav','aside','h1','h2','h3','h4','h5','h6','header','footer','main'];
+    
+    var regionRoles = ['alert','alertdialog','application','article','banner','complementary','contentinfo','directory','form','grid','list','log','main','navigation','region','search','status','tabpanel','tablist','timer','treegrid'];
         
         // Default options
-        defaults = {
+    var defaults = {
             "polyfill": true,
             "roles": {
                 "polyfill":null,
@@ -25,27 +22,6 @@
                         "region": "section"
                     },
                     "callbacks": {
-                        "alert": prepareRegion,
-                        "alertdialog": prepareRegion,
-                        "application": prepareLandmark,
-                        "article": prepareRegion,
-                        "banner": prepareLandmark,
-                        "complementary": prepareLandmark,
-                        "contentinfo": prepareLandmark,
-                        "directory": prepareRegion,
-                        "form": prepareLandmark,
-                        "grid": prepareRegion,
-                        "list": prepareRegion,
-                        "log": prepareRegion,
-                        "main": prepareLandmark,
-                        "navigation": prepareLandmark,
-                        "region": prepareRegion,
-                        "search": prepareLandmark,
-                        "status": prepareRegion,
-                        "tabpanel": prepareRegion,
-                        "tablist": prepareRegion,
-                        "timer": prepareRegion,
-                        "treegrid": prepareRegion
                     },
                     "filters": {},
                     "exclusions": []
@@ -54,8 +30,16 @@
                 "filters": {},
                 "callbacks": {},
                 "exclusions": []
+            },
+            "labeledby": {
+                "roles": {}, // values filled in below
+                "selectors": {}
             }
         };
+        
+    $(regionRoles).each(function(){
+        defaults.labeledby.roles[this.toString()] = true;
+    })
 
     function Plugin( element, options ) {
         this.element = element;
@@ -76,7 +60,8 @@
             selected,
             
             roleFilters = $.extend({}, options.roles.polyfills.filters, options.roles.filters),
-            roleCallbacks = $.extend({}, options.roles.polyfills.callbacks, options.roles.callbacks);
+            roleCallbacks = $.extend({}, options.roles.polyfills.callbacks, options.roles.callbacks),
+            labeledbySelectors = options.labeledby.selectors;
     
         jQuery.each(options.roles.selectors, function(k, v){
             roles[k] = jQuery.isArray(v) ? v : [v] 
@@ -96,7 +81,13 @@
             
         }
         
-        jQuery.each(roles, function(name, selectors){
+        // add labeledby roles to selector list
+        $.each(options.labeledby.roles, function(role,included){
+            if(included)
+                labeledbySelectors['[aria-role="'+role+'"]'] = true
+        })
+        
+        $.each(roles, function(name, selectors){
             
             if(options.roles.exclusions.indexOf(name) < 0){
                 
@@ -131,7 +122,11 @@
             }
         })
         
-        
+        $.each(labeledbySelectors, function(selector, operation){
+            if(operation === true) // use default operation
+                operation = function(){ this.ariaMapperHelper('resolveLabeledBy') };
+            operation.call($(element).find(selector))
+        })
         
     };
     

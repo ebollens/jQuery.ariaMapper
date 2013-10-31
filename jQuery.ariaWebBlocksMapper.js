@@ -28,6 +28,15 @@
                 "callbacks": {
                 },
                 "exclusions": []
+            },
+            "labeledby": {
+                "selectors": {
+                    "form.form div.control label input": function(){
+                        var label = this.closest('div.control').children('label').first();
+                        if(label.find('input').length == 0)
+                            this.ariaMapperHelper('setLabeledBy', label)
+                    }
+                }
             }
         };
     

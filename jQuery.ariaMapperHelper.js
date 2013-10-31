@@ -29,6 +29,8 @@
     }
     
     Plugin.prototype.setLabeledBy = function(label){
+        if(this.attr('aria-labeledby'))
+            return;
         if(label.attr('id') == undefined)
             label.attr('id', "aria-"+Math.random().toString(36).substring(2));
         this.attr('aria-labeledby',label.attr('id'))

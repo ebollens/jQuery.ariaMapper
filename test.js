@@ -281,6 +281,10 @@
                     ok($(this).attr('aria-labeledby') && $(this).attr('aria-labeledby') == $(this).children('header').attr('id'), 'Resolved `div.message.'+type+'` as labeled by `header`');
                 })
             })
+            
+            main.find('form div.control label:not(:first-child) input').each(function(){
+                ok($(this).attr('aria-labeledby') && $(this).attr('aria-labeledby') == $(this).closest('.control').children().first().attr('id'), 'Form control checkset labeledby acquired');
+            })
         });
         
     });

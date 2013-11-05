@@ -1,6 +1,6 @@
 # jQuery.ariaMapper
 
-jQuery.ariaMapper is a module that applies ARiA attributes based on HTML 5 and 
+jQuery.ariaMapper is a module that applies ARIA attributes based on HTML 5 and 
 custom semantics.
 
 ## Status

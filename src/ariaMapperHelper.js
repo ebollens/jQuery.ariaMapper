@@ -1,3 +1,5 @@
+/** jQuery.ariaMapperHelper - http://github.com/ebollens/jQuery.ariaMapper - BSD License */
+
 ;(function ( $, window, document, undefined ) {
     
     var pluginName = 'ariaMapperHelper',

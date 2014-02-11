@@ -2,7 +2,6 @@
     
     var facadeName = 'ariaWebBlocksMapper',
         pluginName = 'ariaMapper',
-        headerElements = ['header','hgroup','h1','h2','h3','h4','h5','h6'],
         
         // Default options
         defaults = {

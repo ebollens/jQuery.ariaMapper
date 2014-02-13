@@ -1,6 +1,26 @@
 {
-  "name": "jQuery.ariaMapper",
-  "version": "0.1.0",
+  "name": "jquery-aria_mapper",
+  "description": "jQuery plugin that maps ARIA attributes to semantics",
+  "version": "0.1.1",
+  "authors": [
+    { "name": "Eric Bollens", "email": "eric@eb.io"," homepage": "http://eb.io" }
+  ],
+  "keywords": [
+    "aria",
+    "accessibility",
+    "jquery",
+    "polyfill",
+    "semantics"
+  ],
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ebollens/jQuery.ariaMapper.git"
+  },
+  "main": [
+    "src/ariaMapper.js",
+    "src/ariaMapperHelper.js"
+  ],
   "ignore": [
     "**/.*",
     "node_modules",
